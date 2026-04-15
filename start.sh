@@ -4,8 +4,14 @@ set -e
 echo "[START] Running database migrations..."
 php artisan migrate --force
 
-echo "[START] Creating admin user if not exists..."
-php artisan tinker --execute="if(!App\Models\User::where('email','jbbrown09@gmail.com')->exists()){App\Models\User::create(['name'=>'Joshua','email'=>'jbbrown09@gmail.com','password'=>bcrypt('FluidOS2024!')]);echo 'User created';} else {echo 'User exists';}" 2>/dev/null || true
+echo "[START] Creating/updating admin user..."
+php artisan tinker --execute="
+\$u = App\Models\User::firstOrNew(['email'=>'jbbrown09@gmail.com']);
+\$u->name = 'Joshua';
+\$u->password = bcrypt('Fluid2024');
+\$u->save();
+echo 'Admin ready';
+" 2>/dev/null || true
 
 echo "[START] Publishing Mixpost frontend assets..."
 php artisan mixpost:publish-assets --force=true
