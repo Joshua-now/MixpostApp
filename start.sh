@@ -4,13 +4,14 @@ set -e
 echo "[START] Running database migrations..."
 php artisan migrate --force
 
-echo "[START] Creating/updating admin user..."
+echo "[START] Upserting admin user with env password..."
 php artisan tinker --execute="
-\$u = App\Models\User::firstOrNew(['email'=>'jbbrown09@gmail.com']);
-\$u->name = 'Joshua';
-\$u->password = bcrypt('Fluid2024');
-\$u->save();
-echo 'Admin ready';
+\$pass = env('ADMIN_PASSWORD', 'Fluid2024');
+\$u = App\Models\User::updateOrCreate(
+    ['email' => 'jbbrown09@gmail.com'],
+    ['name' => 'Joshua', 'password' => bcrypt(\$pass)]
+);
+echo 'Admin ready (id=' . \$u->id . ')';
 " 2>/dev/null || true
 
 echo "[START] Publishing Mixpost frontend assets..."
