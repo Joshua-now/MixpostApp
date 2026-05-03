@@ -2,8 +2,7 @@
 set -e
 
 echo "[START] Running database migrations..."
-php artisan session:table 2>/dev/null || true
-php artisan migrate --force 2>&1 | grep -v "already exists" || true
+php artisan migrate --force
 
 echo "[START] Creating admin user if not exists..."
 php artisan tinker --execute="
